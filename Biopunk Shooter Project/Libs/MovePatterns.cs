@@ -7,41 +7,23 @@ namespace customMovement{
     /// <summary>
     /// Базовый класс для частей тел существ
     /// </summary>
-    class BodyPart: Node2D{
-
-        /// <summary>
-        /// Поле, содержащее графическую репрезентацию объекта
-        /// </summary>
-        public Sprite Sprite;
-
-        /// <summary>
-        /// Поле, отвечающее за сохранение предыдущего положения объекта
-        /// </summary>
-        public Vector2 OldPos;
-
-        /// <summary>
-        /// Поле, отвечающее за сохранение предыдущей трансформации объекта
-        /// </summary>
-        public Transform2D OldTransform;
-
-        public BodyPart(Sprite graph){
-            Sprite = graph;
-            AddChild(Sprite);
-        }
+    public class BodyPart: Node2D{
     }
 
-    class SwarmKreep: BodyPart{
+    public class SwarmCreep: BodyPart{
 
         /// <summary>
         /// Цель движения члена роя
         /// </summary>
         public Vector2 Target;
 
+        [Export]
         /// <summary>
         /// Свойство, отвечающее за то, что член роя перестанет двигаться к его цели
         /// </summary>
         public float epsilon = 1;
 
+        [Export]
         public float MoveSpeed = 0.1f;
 
         /// <summary>
@@ -52,14 +34,12 @@ namespace customMovement{
             return Position.DistanceSquaredTo(Target) < epsilon;
         }
 
-        public SwarmKreep(Sprite sprite):base(sprite){
-            Sprite = sprite;
-        }
-
         public override void _Process(float delta){
             base._Process(delta);
             if(!NearTarget()){
+                if(Position.DistanceTo(Target) > MoveSpeed)
                 Position += Position.DirectionTo(Target)*MoveSpeed;
+                else Position = Target;
             };
         }
     }
@@ -67,20 +47,34 @@ namespace customMovement{
     /// <summary>
     /// Базовый класс для частей тел существ с коллизией
     /// </summary>    
-    class CollisionBodyPart: BodyPart{
+    public class CollisionBodyPart: BodyPart{
+        [Export]
+        NodePath CollisionShape = "";
 
-        /// <summary>
-        /// Поле, содержащее объект коллизии тела
-        /// </summary>
-        public CollisionShape2D CollisionBody;
+        public CollisionObject2D CollShape = null;
 
-        public CollisionBodyPart(CollisionShape2D body, Sprite graph):base (graph){
-            CollisionBody = body;
-            AddChild(CollisionBody);
+        public void SetCollShape(){
+            CollShape = GetNode<CollisionObject2D>(CollisionShape);
+        }
+
+        public override void _EnterTree()
+        {
+            base._EnterTree();
+            if(CollisionShape != "") SetCollShape();
         }
     }
 
-    class CustomBody: CollisionBodyPart{
+    public class CustomBody: CollisionBodyPart{
+
+        /// <summary>
+        /// Поле, отвечающее за сохранение предыдущего положения объекта
+        /// </summary>
+        public Vector2 OldPos;
+
+        /// <summary>
+        /// Поле, отвечающее за сохранение предыдущей трансформации объекта
+        /// </summary>
+        public Transform2D OldTransform;
 
         /// <summary>
         /// Метод для сохранения старой трансформации объекта
@@ -95,85 +89,116 @@ namespace customMovement{
             base._PhysicsProcess(delta);
             SaveState();            
         }
-
-        public CustomBody(CollisionShape2D body, Sprite graph):base (body,graph){
-
-        }
     }
 
     /// <summary>
     /// Тело, состоящее из нескольких плывущих по воздуху объектов
     /// </summary>
-    class SwarmBody: CustomBody{
+    public class SwarmBody: CustomBody{
 
         RandomNumberGenerator Randomiser = new RandomNumberGenerator();
+
+        /// <summary>
+        /// Описывает, какие типы насекомышей используются в рое
+        /// </summary>
+        [Export]
+        public PackedScene[] SwarmSamples = {};
+
+        /// <summary>
+        /// Описывает размер роя
+        /// </summary>
+        [Export]
+        public int SwarmSize;
+
+        /// <summary>
+        /// Описывает, какую форму принимает рой
+        /// </summary>
+        [Export]
+        public NodePath SwarmTemplate;
+
+        public CircleShape2D SwarmShape = new CircleShape2D();
 
         /// <summary>
         /// Список всех членов роя
         /// </summary>
         /// <typeparam name="SwarmMember"></typeparam>
         /// <returns></returns>
-        public List<SwarmKreep> Kreeps = new List<SwarmKreep>();
-
-        /// <summary>
-        /// Свойство, отвечающее за то, как широко расходится рой относительно размера источника
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 SwarmScale = new Vector2(1,1);
-
-        public SwarmBody(CollisionShape2D body, Sprite graph):base (body,graph){
-
-        }
+        public List<SwarmCreep> Kreeps = new List<SwarmCreep>();
 
         public Vector2 GetNewTarget(){
-            return new Vector2((Randomiser.Randf()-0.5f)*Scale.x*SwarmScale.x,(Randomiser.Randf()-0.5f)*Scale.y*SwarmScale.y);
+            float r = SwarmShape.Radius * (float)Math.Sqrt(Randomiser.Randf());
+            float theta = Randomiser.Randf() * 2 * (float)Math.PI;
+            return new Vector2((float)Math.Sin(theta)*r,(float)Math.Cos(theta)*r);
         }
 
-        public void AddKreep(SwarmKreep kreep){
+        public void AddKreep(SwarmCreep kreep){
             Kreeps.Add(kreep);
             kreep.Target = GetNewTarget();
             AddChild(kreep);
         }
 
-        public void RemoveKreep(SwarmKreep kreep){
+        public void RemoveKreep(SwarmCreep kreep){
             Kreeps.Remove(kreep);
             RemoveChild(kreep);
+        }
+
+        public void LoadSwarm(){
+            for (int i = 0; i < SwarmSize; i++)
+            {
+                int SampID = Randomiser.RandiRange(0,SwarmSamples.Length-1);
+                GD.Print(SwarmSamples[SampID],SampID);
+                AddKreep(SwarmSamples[SampID].Instance<SwarmCreep>());
+            }
+        }
+
+        public void UnloadSwarm(){
+            foreach(SwarmCreep kreep in Kreeps){
+                RemoveKreep(kreep);
+            }
+        }
+
+        public void SetSwarmShape(){
+            CollisionShape2D Temp = GetNode<CollisionShape2D>(SwarmTemplate);
+            SwarmShape = (CircleShape2D)Temp.Shape;
         }
 
         public override void _Process(float delta)
         {
             base._Process(delta);
-            foreach (SwarmKreep kreep in Kreeps)
+            foreach (SwarmCreep kreep in Kreeps)
             {
                 if(kreep.NearTarget()) kreep.Target = GetNewTarget();
             }
+        }
+
+        public override void _EnterTree()
+        {
+            base._EnterTree();
+            SetSwarmShape();
+            LoadSwarm();
+        }
+
+        public override void _ExitTree()
+        {
+            base._ExitTree();
         }
     }
 
     /// <summary>
     /// Класс, отображающий тело с сочлененными ногами
     /// </summary>
-    class CrabBody: CustomBody{
-        public CrabBody(CollisionShape2D body, Sprite graph):base (body,graph){
-            
-        }
+    public class CrabBody: CustomBody{
     }
 
     /// <summary>
     /// Класс, отображающий змеиный тип тела
     /// </summary>
-    class SnakeBody: CustomBody{
-        public SnakeBody(CollisionShape2D body, Sprite graph):base (body,graph){
-            
-        }
+    public class SnakeBody: CustomBody{
     }
 
     /// <summary>
     /// Класс, отображающий тело осминога
     /// </summary>
-    class OctopusBody: CustomBody{
-        public OctopusBody(CollisionShape2D body, Sprite graph):base (body,graph){
-            
-        }
+    public class OctopusBody: CustomBody{
     }
 }

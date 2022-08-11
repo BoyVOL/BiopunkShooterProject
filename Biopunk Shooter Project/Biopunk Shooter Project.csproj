@@ -6,5 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Libs\MovePatterns.cs" />
+    <Content Include="Scenes\Objects\TestObjectScene.cs" />
+    <Content Include="Scenes\Rooms\TestScene.cs" />
   </ItemGroup>
 </Project>
