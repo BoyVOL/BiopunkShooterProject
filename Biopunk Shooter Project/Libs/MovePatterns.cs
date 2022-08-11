@@ -64,7 +64,7 @@ namespace customMovement{
         }
     }
 
-    public class CustomBody: CollisionBodyPart{
+    public class CustomBody: RigidBody2D{
 
         /// <summary>
         /// Поле, отвечающее за сохранение предыдущего положения объекта
@@ -146,7 +146,6 @@ namespace customMovement{
             for (int i = 0; i < SwarmSize; i++)
             {
                 int SampID = Randomiser.RandiRange(0,SwarmSamples.Length-1);
-                GD.Print(SwarmSamples[SampID],SampID);
                 AddKreep(SwarmSamples[SampID].Instance<SwarmCreep>());
             }
         }
