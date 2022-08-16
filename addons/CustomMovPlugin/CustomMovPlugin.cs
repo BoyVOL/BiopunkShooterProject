@@ -8,16 +8,16 @@ public class CustomMovPlugin : EditorPlugin
     public override void _EnterTree(){
         base._EnterTree();
         GD.Print("Plugin ready");
-        GD.Print("Plugin ready2");
-        GD.Print("Plugin ready3");
-        AddCustomType("CustomBody","Node",GD.Load<Script>(LibDir+"IerarchyNodes/CustomBody.cs"),null);
-        AddCustomType("CustomBody1","Node2D",GD.Load<Script>(LibDir+"IerarchyNodes/CustomBody.cs"),null);
+        AddCustomType("SwarmController","Node2D",GD.Load<Script>("res://addons/CustomMovPlugin/SwarmController/SwarmControllerNode.cs"),
+        GD.Load<Texture>("res://addons/CustomMovPlugin/SwarmController/icon.png"));
+        AddCustomType("SwarmKreep","Node2D",GD.Load<Script>("res://addons/CustomMovPlugin/SwarmKreep/SwarmKreepNode.cs"),
+        GD.Load<Texture>("res://addons/CustomMovPlugin/SwarmKreep/icon.png"));
     }
 
     public override void _ExitTree()
     {
         base._ExitTree();
-        RemoveCustomType("CustomBody");
-        RemoveCustomType("CustomBody1");
+        RemoveCustomType("SwarmController");
+        RemoveCustomType("SwarmKreep");
     }
 }

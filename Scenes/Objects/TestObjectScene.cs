@@ -2,7 +2,7 @@ using Godot;
 using System;
 using customMovement;
 
-public class TestObjectScene : SwarmBody
+public class TestObjectScene : Node2D
 {
 
     // Declare member variables here. Examples:
