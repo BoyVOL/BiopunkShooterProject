@@ -15,12 +15,12 @@ radius = 27.4591
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -1, 1 )
 rotation = 0.546288
 shape = SubResource( 2 )
 
 [node name="SwarmBody" type="Node2D" parent="."]
 script = ExtResource( 1 )
 SwarmSample = ExtResource( 3 )
-SwarmSize = 1000
+SwarmSize = 4
 SwarmRadius = 30.0
+MoveSpeed = 10.0
