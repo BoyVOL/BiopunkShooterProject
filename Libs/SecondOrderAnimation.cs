@@ -1,9 +1,10 @@
 using Godot;
 using System;
+using System.Collections;
 
 namespace SOAnimation
 {
-    public class SecondOrderPosition : Position2D{
+    public class VectorDampener{
         /// <summary>
         /// Предыдущий вход
         /// </summary>

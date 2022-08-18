@@ -1,9 +1,9 @@
 using Godot;
 using System;
-using customMovement;
+using CustomAnimations;
 using System.Collections.Generic;
     
-namespace customMovement{
+namespace CustomAnimations{
     
         /// <summary>
         /// Тело, состоящее из нескольких плывущих по воздуху объектов

@@ -9,5 +9,6 @@
     <Content Include="Scenes\Objects\TestObjectScene.cs" />
     <Content Include="Scenes\Rooms\TestScene.cs" />
     <Content Include="Libs\LevelDesign.cs" />
+    <Content Include="Libs\SecondOrderAnimation.cs" />
   </ItemGroup>
 </Project>
