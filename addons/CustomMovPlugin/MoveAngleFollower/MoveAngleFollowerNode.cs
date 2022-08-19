@@ -9,6 +9,14 @@ namespace CustomAnimations{
         /// Тело, состоящее из нескольких плывущих по воздуху объектов
         /// </summary>
         public class MoveAngleFollower: RelativeCoordSaver{
+                public float GetSpeedAngle(){
+                        return OldPosition.DirectionTo(GetRelPosition()).Angle();
+                }
+
+                public override void _Process(float delta){
+                        Rotation = GetSpeedAngle();
+                        base._Process(delta);
+                }
         }
             
 }

@@ -21,7 +21,7 @@ namespace CustomAnimations{
         protected Node2D RefNode = null;
 
         public void GetRefNode(NodePath refNodePath){
-            if(refNodePath != null) RefNode = GetTree().Root.GetNode<Node2D>(refNodePath);
+            if(refNodePath != null && refNodePath != "") RefNode = GetTree().Root.GetNode<Node2D>(refNodePath);
         }
 
         public Vector2 GetRelPosition(){

@@ -21,6 +21,6 @@ shape = SubResource( 2 )
 [node name="SwarmBody" type="Node2D" parent="."]
 script = ExtResource( 1 )
 SwarmSample = ExtResource( 3 )
-SwarmSize = 4
+SwarmSize = 100
 SwarmRadius = 30.0
-MoveSpeed = 10.0
+MoveSpeed = 1.0
