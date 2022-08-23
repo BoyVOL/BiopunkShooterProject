@@ -12,6 +12,8 @@ public class CustomMovPlugin : EditorPlugin
         GD.Load<Texture>("res://addons/CustomMovPlugin/SwarmController/icon.png"));
         AddCustomType("MoveAngleFollower","Node2D",GD.Load<Script>("res://addons/CustomMovPlugin/MoveAngleFollower/MoveAngleFollowerNode.cs"),
         GD.Load<Texture>("res://addons/CustomMovPlugin/MoveAngleFollower/icon.png"));
+        AddCustomType("SecondOrder","Node2D",GD.Load<Script>("res://addons/CustomMovPlugin/SecondOrder/SecondOrderNode.cs"),
+        GD.Load<Texture>("res://addons/CustomMovPlugin/SecondOrder/icon.png"));
     }
 
     public override void _ExitTree()
@@ -19,5 +21,6 @@ public class CustomMovPlugin : EditorPlugin
         base._ExitTree();
         RemoveCustomType("SwarmController");
         RemoveCustomType("MoveAngleFollower");
+        RemoveCustomType("SecondOrder");
     }
 }
