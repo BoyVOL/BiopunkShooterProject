@@ -8,7 +8,7 @@ namespace CustomAnimations{
         /// <summary>
         /// Тело, состоящее из нескольких плывущих по воздуху объектов
         /// </summary>
-        public class MoveAngleFollower: RelativeCoordSaver{
+        public class MoveAngleFollower: CoordSaver{
                 public float GetSpeedAngle(){
                         return OldPosition.DirectionTo(GetRelPosition()).Angle();
                 }

@@ -10,5 +10,6 @@
     <Content Include="Scenes\Rooms\TestScene.cs" />
     <Content Include="Libs\LevelDesign.cs" />
     <Content Include="Libs\SecondOrderAnimation.cs" />
+    <Content Include="addons\CustomMovPlugin\SecondOrder\SecondOrderNode.cs" />
   </ItemGroup>
 </Project>
