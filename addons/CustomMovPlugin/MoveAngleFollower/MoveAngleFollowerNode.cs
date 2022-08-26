@@ -10,7 +10,7 @@ namespace CustomAnimations{
         /// </summary>
         public class MoveAngleFollower: CoordSaver{
                 public float GetSpeedAngle(){
-                        return OldPosition.DirectionTo(GetRelPosition()).Angle();
+                        return OldPosition.DirectionTo(GetRelPosition(RefNode)).Angle();
                 }
 
                 public override void _Process(float delta){

@@ -15,6 +15,8 @@ namespace CustomAnimations
         /// </summary>
         private Vector2 y = Vector2.Zero,yd = Vector2.Zero;
 
+        private float _w;
+
         /// <summary>
         /// Константы
         /// </summary>
@@ -27,10 +29,17 @@ namespace CustomAnimations
         /// <param name="z">коэффициент сопротивления</param>
         /// <param name="r">начальный ответ системы</param>
         public void SetConstants(float f, float z, float r){
+            _w = 2*(float)Math.PI*f;
             k1 = z / ((float)Math.PI * f);
-            k2 = 1 / ((2 * (float)Math.PI * f)*(2 * (float)Math.PI * f));
-            k3 = r*z/(2 * (float)Math.PI * f);
+            k2 = 1 / (_w*_w);
+            k3 = r*z/_w;
             GD.Print(k1,k2,k3);
+        }
+
+        public void SetCoords(Vector2 X){
+            xp = X;
+            y = X;
+            yd = Vector2.Zero;
         }
 
         /// <summary>
@@ -42,9 +51,12 @@ namespace CustomAnimations
         public Vector2 Update(float T, Vector2 x){
             Vector2 xd = (x-xp)/T;
             xp = x;
-            float Stabk2 = Math.Max(k2,1.1f*(T*T/4+T*k1/2));//Вычисляем стабильный коэффициент, чтобы не привести к разбалансировки модели
+            float StabK1,StabK2;
+            StabK1 = k1;
+            StabK2 = Math.Max(k2,Math.Max(T*T/2+T*k1/2,T*k1));//Вычисляем стабильный коэффициент, чтобы не привести к разбалансировки модели
             y=y+T*yd;
-            yd = yd+T*(x+k3*xd-y-k1*yd)/Stabk2;
+            Vector2 Accel = (x+k3*xd-y-k1*yd)/StabK2;
+            yd = yd+T*Accel;
             return y;
         }
     }
@@ -61,30 +73,25 @@ public class SecondOrderNode : RelativeCoords
     public float f=1,z=1,r=1;
 
     [Export]
-    public NodePath TargetNodePath;
+    public NodePath TargetNodePath = new NodePath("");
 
-    protected Node2D TargetNode;
+    protected Node2D TargetNode = null;
 
     protected VectorDampener Dampener = new VectorDampener();
-
-    /// <summary>
-    /// Метод, задающий целевую ноду
-    /// </summary>
-    /// <param name="refNodePath"></param>    
-    public void GetTargetNode(NodePath refNodePath){
-            if(refNodePath != null && refNodePath != "") RefNode = GetNode<Node2D>(refNodePath);
-        }
 
     public override void _EnterTree()
     {
         base._EnterTree();
+        Dampener.SetCoords(GlobalPosition);
         Dampener.SetConstants(f,z,r);
+        TargetNode = GetNodeOrNull<Node2D>(TargetNodePath);
     }
     
     public override void _Process(float delta)
     {
         base._Process(delta);
-        GlobalPosition = Dampener.Update(delta,RefNode.GlobalPosition);
+        Vector2 Damp = Dampener.Update(delta,GetRelPosition(RefNode,TargetNode));
+        SetRelPosition(RefNode,Damp);
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
