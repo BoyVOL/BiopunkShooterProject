@@ -1,13 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/CustomMovPlugin/SwarmController/SwarmControllerNode.cs" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://Scenes/Objects/SwarmCreep1.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Objects/MainObject.cs" type="Script" id=4]
 
 [sub_resource type="CircleShape2D" id=2]
 radius = 27.4591
 
-[node name="Node2D" type="RigidBody2D"]
+[node name="MainObject" type="RigidBody2D"]
+script = ExtResource( 4 )
 
 [node name="Position2D" type="Position2D" parent="."]
 
